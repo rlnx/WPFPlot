@@ -10,4 +10,4 @@ Features
 
 Screenshot
 ----------
-[!WPFPlot screenshot](http://s28.postimg.org/h2dxnq5ct/wpfplot.png)
+![WPFPlot screenshot](http://s28.postimg.org/h2dxnq5ct/wpfplot.png)
