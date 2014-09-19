@@ -1,6 +1,5 @@
-WPFPlot
+WPF Plot
 =======
-
 Lightweight WPF library for plotting one dimensional mathematical functions.
 
 Features
@@ -10,4 +9,21 @@ Features
 
 Screenshot
 ----------
-![WPFPlot screenshot](http://s28.postimg.org/h2dxnq5ct/wpfplot.png)
+![WPFPlot screenshot](http://s28.postimg.org/ydgkcmvhp/wpfplot.png)
+
+Quickstart
+----------
+Import WPF Plot namespace:
+~~~xml
+<Window xmlns:wpfplot="clr-namespace:WPFPlot.Controls;assembly=WPFPlot" />
+~~~
+Create `GraphControl` and set `PlotData`. Data context object must be instance of `IPlotDataSource`. 
+~~~xml
+<wpfplot:GraphControl SegmentBegin="-3.14" SegmentEnd="3.14">
+    <wpfplot:GraphItem StrokeBrush="Blue" PlotData="{Binding}" />
+</wpfplot:GraphControl>
+~~~
+
+License
+-------
+MIT License.
