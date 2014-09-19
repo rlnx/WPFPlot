@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WPFPlot.Data;
 
 namespace WPFPlot.Example.ViewModel
@@ -12,7 +8,7 @@ namespace WPFPlot.Example.ViewModel
 
 		public MainModel()
 		{
-			var f1 = new FunctionWrapper(x => Math.Sin(x)     );
+			var f1 = new FunctionWrapper(x => Math.Sin(x));
 			var f2 = new FunctionWrapper(x => 2 * Math.Cos(x));
 			var f3 = new FunctionWrapper(x => -Math.Sin(x));
 			var f4 = new FunctionWrapper(x => -2 * Math.Cos(x));

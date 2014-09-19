@@ -2,7 +2,6 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:wpfplot="clr-namespace:WPFPlot.Controls;assembly=WPFPlot"
-        xmlns:local="clr-namespace:WPFPlot.Example"
         xmlns:vm="clr-namespace:WPFPlot.Example.ViewModel"
         Title="WPFPlot Example" Height="500" Width="800">
 
@@ -23,7 +22,6 @@
          <wpfplot:GraphItem StrokeBrush="Orange" PlotData="{Binding Test4}" />
 
       </wpfplot:GraphControl>
-
 
       <Slider 
          x:Name="zoomSlider" 
