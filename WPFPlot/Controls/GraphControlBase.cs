@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Specialized;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media;
@@ -21,37 +20,15 @@ namespace WPFPlot.Controls
 			AddLogicalChild(mInternalItems);
 
 			Items = new GraphItemCollection();
+			SubscribeToItemsUpdating(Items);
 			mInternalItems.ItemsSource = Items;
+
 			DataContextChanged += (s, e) =>
 			{ mInternalItems.DataContext = e.NewValue; };
 		}
 
 
-		#region Items Property
-
-		public static readonly DependencyProperty ItemsProperty = 
-			DependencyProperty.Register(
-			"Items",
-			typeof(GraphItemCollection),
-			typeof(GraphControlBase),
-			new FrameworkPropertyMetadata(null, OnItemsPropertyChanged));
-
-		private static void OnItemsPropertyChanged(DependencyObject dObj,
-			DependencyPropertyChangedEventArgs e)
-		{
-			var oldValue = e.OldValue as GraphItemCollection;
-			var newValue = e.NewValue as GraphItemCollection;
-			var owner = (GraphControlBase)dObj;
-			owner.OnItemsChanged(oldValue, newValue);
-		}
-
-		public GraphItemCollection Items
-		{
-			get { return (GraphItemCollection)GetValue(ItemsProperty); }
-			set { SetValue(ItemsProperty, value); }
-		}
-
-		#endregion
+		public GraphItemCollection Items { get; private set; }
 
 
 		protected virtual void OnItemsChanged(
