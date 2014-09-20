@@ -47,16 +47,7 @@ namespace WPFPlot.Controls
 			typeof(Thickness),
 			typeof(GraphControl),
 			new FrameworkPropertyMetadata(new Thickness(0),
-				OnInternalMarginsPropertyChanged));
-
-		private static void OnInternalMarginsPropertyChanged(DependencyObject dObj,
-		DependencyPropertyChangedEventArgs e)
-		{
-			var oldValue = (Thickness)e.OldValue;
-			var newValue = (Thickness)e.NewValue;
-			var owner = (GraphControl)dObj;
-			owner.InvalidateVisualInternal();
-		}
+				FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public Thickness InternalMargins
 		{
@@ -73,16 +64,8 @@ namespace WPFPlot.Controls
 			"GridMinStep",
 			typeof(double),
 			typeof(GraphControl),
-				new FrameworkPropertyMetadata(50d, OnGridMinStepPropertyChanged));
-
-		private static void OnGridMinStepPropertyChanged(DependencyObject dObj,
-		DependencyPropertyChangedEventArgs e)
-		{
-			var oldValue = (double)e.OldValue;
-			var newValue = (double)e.NewValue;
-			var owner = (GraphControl)dObj;
-			owner.InvalidateVisualInternal();
-		}
+				new FrameworkPropertyMetadata(50d,
+					FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public double GridMinStep
 		{
@@ -100,17 +83,7 @@ namespace WPFPlot.Controls
 			typeof(double),
 			typeof(GraphControl),
 			new FrameworkPropertyMetadata(Double.NegativeInfinity,
-				OnSegmentBeginPropertyChanged));
-
-		private static void OnSegmentBeginPropertyChanged(DependencyObject dObj,
-		DependencyPropertyChangedEventArgs e)
-		{
-			var oldValue = (double)e.OldValue;
-			var newValue = (double)e.NewValue;
-			var owner = (GraphControl)dObj;
-			Contract.Requires(newValue < owner.SegmentEnd);
-			owner.InvalidateVisualInternal();
-		}
+				FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public double SegmentBegin
 		{
@@ -127,17 +100,7 @@ namespace WPFPlot.Controls
 			typeof(double),
 			typeof(GraphControl),
 			new FrameworkPropertyMetadata(Double.PositiveInfinity,
-				OnSegmentEndPropertyChanged));
-
-		private static void OnSegmentEndPropertyChanged(DependencyObject dObj,
-		DependencyPropertyChangedEventArgs e)
-		{
-			var oldValue = (double)e.OldValue;
-			var newValue = (double)e.NewValue;
-			var owner = (GraphControl)dObj;
-			Contract.Requires(newValue > owner.SegmentBegin);
-			owner.InvalidateVisualInternal();
-		}
+				FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public double SegmentEnd
 		{
@@ -154,16 +117,8 @@ namespace WPFPlot.Controls
 			"GridBrush",
 			typeof(Brush),
 			typeof(GraphControl),
-			new FrameworkPropertyMetadata(null, OnGridBrushPropertyChanged));
-
-		private static void OnGridBrushPropertyChanged(DependencyObject dObj,
-		DependencyPropertyChangedEventArgs e)
-		{
-			var oldValue = (Brush)e.OldValue;
-			var newValue = (Brush)e.NewValue;
-			var owner = (GraphControl)dObj;
-			owner.InvalidateVisualInternal();
-		}
+			new FrameworkPropertyMetadata(null, 
+				FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public Brush GridBrush
 		{
@@ -179,16 +134,8 @@ namespace WPFPlot.Controls
 			"GridThickness",
 			typeof(double),
 			typeof(GraphControl),
-			new FrameworkPropertyMetadata(1d, OnGridThicknessPropertyChanged));
-
-		private static void OnGridThicknessPropertyChanged(DependencyObject dObj,
-		DependencyPropertyChangedEventArgs e)
-		{
-			var oldValue = (double)e.OldValue;
-			var newValue = (double)e.NewValue;
-			var owner = (GraphControl)dObj;
-			owner.InvalidateVisualInternal();
-		}
+			new FrameworkPropertyMetadata(1d,
+				FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public double GridThickness
 		{
@@ -205,16 +152,8 @@ namespace WPFPlot.Controls
 			"AxisBrush",
 			typeof(Brush),
 			typeof(GraphControl),
-			new FrameworkPropertyMetadata(null, OnAxisBrushPropertyChanged));
-
-		private static void OnAxisBrushPropertyChanged(DependencyObject dObj,
-		DependencyPropertyChangedEventArgs e)
-		{
-			var oldValue = (Brush)e.OldValue;
-			var newValue = (Brush)e.NewValue;
-			var owner = (GraphControl)dObj;
-			owner.InvalidateVisualInternal();
-		}
+			new FrameworkPropertyMetadata(null, 
+				FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public Brush AxisBrush
 		{
@@ -231,16 +170,8 @@ namespace WPFPlot.Controls
 			"AxisThickness",
 			typeof(double),
 			typeof(GraphControl),
-			new FrameworkPropertyMetadata(1d, OnAxisThicknessPropertyChanged));
-
-		private static void OnAxisThicknessPropertyChanged(DependencyObject dObj,
-		DependencyPropertyChangedEventArgs e)
-		{
-			var oldValue = (double)e.OldValue;
-			var newValue = (double)e.NewValue;
-			var owner = (GraphControl)dObj;
-			owner.InvalidateVisualInternal();
-		}
+			new FrameworkPropertyMetadata(1d,
+				FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public double AxisThickness
 		{
@@ -257,16 +188,8 @@ namespace WPFPlot.Controls
 			"IsGridEnabled",
 			typeof(bool),
 			typeof(GraphControl),
-			new FrameworkPropertyMetadata(true, OnIsGridEnabledPropertyChanged));
-
-		private static void OnIsGridEnabledPropertyChanged(DependencyObject dObj,
-			DependencyPropertyChangedEventArgs e)
-		{
-			var oldValue = (bool)e.OldValue;
-			var newValue = (bool)e.NewValue;
-			var owner = (GraphControl)dObj;
-			owner.InvalidateVisualInternal();
-		}
+			new FrameworkPropertyMetadata(true,
+				FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public bool IsGridEnabled
 		{
@@ -353,34 +276,60 @@ namespace WPFPlot.Controls
 			Contract.Requires(newValue >= 0d);
 			Contract.Requires(newValue <= 1d);
 			mPointTrans.Zoom = ZOOM_MIN + newValue * (ZOOM_MAX - ZOOM_MIN);
-			InvalidateVisualInternal();
+			InvalidateVisual();
 		}
 
 		protected virtual void OnCenterChanged(Point oldValue, Point newValue)
 		{
 			mPointTrans.Center = newValue;
-			InvalidateVisualInternal();
+			InvalidateVisual();
 		}
 
 
 		protected override Size MeasureOverride(Size constraint)
 		{
-			DisableVisualInvalidation();
+			IsInvalidateVisualEnabled = false;
 			Point notModifiedCenter = GetNotModifiedCenter(constraint);
 			Center = notModifiedCenter + mLastCenterTrans;
-			EnableVisualInvalidation();
+
+			foreach (UIElement item in Items)
+			{
+				var fe = item as FrameworkElement;
+				if (fe != null)
+				{
+					fe.VerticalAlignment = System.Windows.VerticalAlignment.Top;
+					fe.HorizontalAlignment = System.Windows.HorizontalAlignment.Left;
+				}
+				item.Measure(constraint);
+			}
+
+			IsInvalidateVisualEnabled = true;
 			base.MeasureOverride(constraint);
 			return constraint;
 		}
 
 		protected override Size ArrangeOverride(Size arrangeBounds)
-		{ return arrangeBounds; }
+		{
+			var rect = new Rect(new Point(), arrangeBounds);
+			foreach (UIElement item in Items)
+			{
+				double x = GraphControl.GetBindPointX(item);
+				double y = GraphControl.GetBindPointY(item);
+				var bindPoint = new Point(x, y);
+				rect.Location = mPointTrans.Translate(bindPoint);
+				item.Arrange(rect);
+			}
+			return arrangeBounds;
+		}
 
 
 
 
 		protected override void OnRender(DrawingContext dc)
 		{
+			if (!IsInvalidateVisualEnabled)
+				return;
+
 			base.OnRender(dc);
 
 			Rect recnderRect = new Rect(0, 0, ActualWidth, ActualHeight);
@@ -547,7 +496,7 @@ namespace WPFPlot.Controls
 
 		private void RenderPlotData(DrawingContext dc)
 		{
-			if (Items == null)
+			if (GraphItems == null)
 				return;
 
 			double left = GetLeftGraphBound();
@@ -563,7 +512,7 @@ namespace WPFPlot.Controls
 			Rect gRect = GetGraphRectangle();
 			gRect.X = mPointTrans.TransalteX(from);
 			gRect.Width = mPointTrans.TransalteX(to) - gRect.X;
-			foreach (var item in Items)
+			foreach (var item in GraphItems)
 				RendePlotDataItem(dc, item, gRect, from, to);
 		}
 

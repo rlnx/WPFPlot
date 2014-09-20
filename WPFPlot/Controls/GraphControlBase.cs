@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Markup;
 using System.Windows.Media;
 
 namespace WPFPlot.Controls
 {
-	[ContentProperty("Items")]
+	[ContentProperty("GraphItems")]
 	public abstract class GraphControlBase : Control
 	{
 
@@ -15,23 +16,77 @@ namespace WPFPlot.Controls
 
 		public GraphControlBase()
 		{
-			mInternalItems = new GraphControlItems();
-			AddVisualChild(mInternalItems);
-			AddLogicalChild(mInternalItems);
+			Items = new UIElementCollection(this, this);
 
-			Items = new GraphItemCollection();
-			SubscribeToItemsUpdating(Items);
-			mInternalItems.ItemsSource = Items;
+			mInternalItems = new GraphControlItems();
+			AddLogicalChild(mInternalItems);
+			AddVisualChild(mInternalItems);
+
+			GraphItems = new GraphItemCollection();
+			SubscribeToItemsUpdating(GraphItems);
+			mInternalItems.ItemsSource = GraphItems;
 
 			DataContextChanged += (s, e) =>
 			{ mInternalItems.DataContext = e.NewValue; };
 		}
 
 
-		public GraphItemCollection Items { get; private set; }
+		#region Attached Properties
+
+		public static readonly DependencyProperty BindPointXProperty = 
+			DependencyProperty.RegisterAttached(
+			"BindPointX", 
+			typeof(double), 
+			typeof(GraphControlBase),
+			new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsArrange));
+
+		public static double GetBindPointX(UIElement element)
+		{ return (double)element.GetValue(BindPointXProperty); }
+
+		public static void SetBindPointX(UIElement element, double x)
+		{
+			element.SetValue(BindPointXProperty, x);
+			InvalidateParentArrange(element);
+		}
+
+		public static readonly DependencyProperty BindPointYProperty = 
+			DependencyProperty.RegisterAttached(
+			"BindPointY",
+			typeof(double),
+			typeof(GraphControlBase),
+			new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsArrange));
+
+		public static double GetBindPointY(UIElement element)
+		{ return (double)element.GetValue(BindPointYProperty); }
+
+		public static void SetBindPointY(UIElement element, double y)
+		{
+			element.SetValue(BindPointYProperty, y);
+			InvalidateParentArrange(element);
+		}
+
+		private static void InvalidateParentArrange(UIElement element)
+		{
+			var fElement = element as FrameworkElement;
+			if (fElement == null)
+				return;
+
+			var parentGraph = fElement.Parent as GraphControlBase;
+			if (parentGraph == null)
+				return;
+
+			parentGraph.InvalidateArrange();
+		}
+
+		#endregion
 
 
-		protected virtual void OnItemsChanged(
+		public GraphItemCollection GraphItems { get; private set; }
+		public UIElementCollection Items { get; private set; }
+
+		protected bool IsInvalidateVisualEnabled { get; set; }
+		
+		protected virtual void OnGraphItemsChanged(
 			GraphItemCollection oldValue,
 			GraphItemCollection newValue)
 		{
@@ -45,24 +100,19 @@ namespace WPFPlot.Controls
 
 
 		protected override int VisualChildrenCount
-		{ get { return 1; } }
+		{ get { return Items.Count + 1; } }
 
 		protected override Visual GetVisualChild(int index)
-		{ return mInternalItems; }
-
-
-		protected void EnableVisualInvalidation()
-		{ mIsInvalidateVisualEnabled = true; }
-
-		protected void DisableVisualInvalidation()
-		{ mIsInvalidateVisualEnabled = false; }
-
-		private bool mIsInvalidateVisualEnabled;
-		protected void InvalidateVisualInternal()
 		{
-			if (mIsInvalidateVisualEnabled)
-				InvalidateVisual();
+			if (index == 0)
+				return mInternalItems;
+
+			return Items[index - 1]; 
 		}
+
+
+
+
 
 
 		private void SubscribeToItemsUpdating(GraphItemCollection collection)
