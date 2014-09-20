@@ -37,6 +37,7 @@ namespace WPFPlot.Controls
 			mPointTrans = new PointTranslater() { Zoom = ZOOM_DEFAULT };
 		}
 
+		#region Dependency Properties
 
 		#region InternalMargins Property
 
@@ -344,6 +345,8 @@ namespace WPFPlot.Controls
 
 		#endregion
 
+		#endregion
+
 
 		protected virtual void OnZoomChanged(double oldValue, double newValue)
 		{
@@ -358,6 +361,7 @@ namespace WPFPlot.Controls
 			mPointTrans.Center = newValue;
 			InvalidateVisualInternal();
 		}
+
 
 		protected override Size MeasureOverride(Size constraint)
 		{
