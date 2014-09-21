@@ -8,4 +8,39 @@
       <Setter Property="GridBrush" Value="Gainsboro" />
    </Style>
 
+   <Style TargetType="local:TracingBox">
+      <Setter Property="Background" Value="Gainsboro" />
+      <Setter Property="Foreground" Value="Black" />
+      <Setter Property="Template">
+         <Setter.Value>
+            <ControlTemplate TargetType="local:TracingBox">
+               <Grid 
+                  Background="{TemplateBinding Background}"
+                  Width="80">
+                  <Grid.RowDefinitions>
+                     <RowDefinition />
+                     <RowDefinition />
+                  </Grid.RowDefinitions>
+
+                  <StackPanel 
+                     Grid.Row="0"
+                     Margin="5, 3, 0, 0"
+                     Orientation="Horizontal">
+                     <TextBlock Foreground="{TemplateBinding Foreground}" Text="X: " />
+                     <TextBlock Foreground="{TemplateBinding Foreground}" Text="{TemplateBinding XValue}" />
+                  </StackPanel>
+
+                  <StackPanel 
+                     Grid.Row="1"
+                     Margin="5, 0, 0, 3"
+                     Orientation="Horizontal">
+                     <TextBlock Foreground="{TemplateBinding Foreground}" Text="Y: " />
+                     <TextBlock Foreground="{TemplateBinding Foreground}" Text="{TemplateBinding YValue}" />
+                  </StackPanel>
+               </Grid>
+            </ControlTemplate>
+         </Setter.Value>
+      </Setter>
+   </Style>
+
 </ResourceDictionary>

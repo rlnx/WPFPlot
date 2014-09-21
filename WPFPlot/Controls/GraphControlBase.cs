@@ -35,8 +35,8 @@ namespace WPFPlot.Controls
 
 		public static readonly DependencyProperty BindPointXProperty = 
 			DependencyProperty.RegisterAttached(
-			"BindPointX", 
-			typeof(double), 
+			"BindPointX",
+			typeof(double),
 			typeof(GraphControlBase),
 			new FrameworkPropertyMetadata(0d, FrameworkPropertyMetadataOptions.AffectsArrange));
 
@@ -85,19 +85,13 @@ namespace WPFPlot.Controls
 		public UIElementCollection Items { get; private set; }
 
 		protected bool IsInvalidateVisualEnabled { get; set; }
-		
-		protected virtual void OnGraphItemsChanged(
-			GraphItemCollection oldValue,
-			GraphItemCollection newValue)
-		{
-			UnsubscribeFromItemsUpdating(oldValue);
-			SubscribeToItemsUpdating(newValue);
-			OnGraphItemsUpdated();
-		}
 
 
-		protected virtual void OnGraphItemsUpdated() { }
+		protected virtual void OnGraphItemsUpdated(
+			GraphItemUpdateOptions options) { }
 
+		protected virtual void PrepareItemOverride(GraphItem item)
+		{ }
 
 		protected override int VisualChildrenCount
 		{ get { return Items.Count + 1; } }
@@ -107,11 +101,8 @@ namespace WPFPlot.Controls
 			if (index == 0)
 				return mInternalItems;
 
-			return Items[index - 1]; 
+			return Items[index - 1];
 		}
-
-
-
 
 
 
@@ -122,7 +113,7 @@ namespace WPFPlot.Controls
 
 			collection.CollectionChanged += GraphItemsCollectionChanged;
 			foreach (var item in collection)
-				item.Updated += ItemUpdated;
+				PrepareItem(item);
 		}
 
 		private void UnsubscribeFromItemsUpdating(GraphItemCollection collection)
@@ -142,12 +133,12 @@ namespace WPFPlot.Controls
 			{
 				case NotifyCollectionChangedAction.Add:
 					foreach (var o in e.NewItems)
-						((GraphItem)o).Updated += ItemUpdated;
+						PrepareItem((GraphItem)o);
 					break;
 
 				case NotifyCollectionChangedAction.Replace:
 					foreach (var o in e.NewItems)
-						((GraphItem)o).Updated += ItemUpdated;
+						PrepareItem((GraphItem)o);
 					foreach (var o in e.OldItems)
 						((GraphItem)o).Updated -= ItemUpdated;
 					break;
@@ -162,14 +153,22 @@ namespace WPFPlot.Controls
 					foreach (var o in items)
 					{
 						((GraphItem)o).Updated -= ItemUpdated;
-						((GraphItem)o).Updated += ItemUpdated;
+						PrepareItem((GraphItem)o);
 					}
 					break;
 			}
+
+			OnGraphItemsUpdated(GraphItemUpdateOptions.DataSourceChanged);
 		}
 
-		private void ItemUpdated(object sender, EventArgs e)
-		{ OnGraphItemsUpdated(); }
+		private void ItemUpdated(object sender, GraphItemUpdatedEventArgs e)
+		{ OnGraphItemsUpdated(e.Options); }
+
+		private void PrepareItem(GraphItem item)
+		{
+			item.Updated += ItemUpdated;
+			PrepareItemOverride(item);
+		}
 
 	}
 }

@@ -57,8 +57,12 @@
     <Compile Include="Controls\GraphControl.cs" />
     <Compile Include="Controls\GraphControlBase.cs" />
     <Compile Include="Controls\GraphControlItems.cs" />
+    <Compile Include="Controls\GraphDrawingOptions.cs" />
     <Compile Include="Controls\GraphItem.cs" />
     <Compile Include="Controls\GraphItemCollection.cs" />
+    <Compile Include="Controls\GraphItemUpdatedEventArgs.cs" />
+    <Compile Include="Controls\GraphItemUpdateOptions.cs" />
+    <Compile Include="Controls\TracingBox.cs" />
     <Compile Include="Data\ContinuousPlotDataSource.cs" />
     <Compile Include="Data\IEvaluateable.cs" />
     <Compile Include="Data\IPlotDataSource.cs" />

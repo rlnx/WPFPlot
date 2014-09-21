@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics.Contracts;
 using System.Globalization;
 using System.Windows;
@@ -22,11 +24,12 @@ namespace WPFPlot.Controls
 		private const double ZOOM_MAX = 500d;
 		private const double ZOOM_DEFAULT = (ZOOM_MAX + ZOOM_MIN) / 2d;
 		private const double AXIS_DIGITS_MARGIN = 3d;
-		private const double BOUND_POINT_RADOUS = 3d;
 		private const int    AXIS_DIGITS_NUMBERS = 4;
 
 		private PointTranslater mPointTrans;
+		private List<TracingBox> mTraceBoxes;
 
+		private Point mCurrentCursorPos;
 		private Point mCapturePoint;
 		private Point mCaptureCenter;
 		private Vector mLastCenterTrans;
@@ -34,8 +37,10 @@ namespace WPFPlot.Controls
 
 		public GraphControl()
 		{
+			mTraceBoxes = new List<TracingBox>();
 			mPointTrans = new PointTranslater() { Zoom = ZOOM_DEFAULT };
 		}
+
 
 		#region Dependency Properties
 
@@ -117,7 +122,7 @@ namespace WPFPlot.Controls
 			"GridBrush",
 			typeof(Brush),
 			typeof(GraphControl),
-			new FrameworkPropertyMetadata(null, 
+			new FrameworkPropertyMetadata(null,
 				FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public Brush GridBrush
@@ -152,7 +157,7 @@ namespace WPFPlot.Controls
 			"AxisBrush",
 			typeof(Brush),
 			typeof(GraphControl),
-			new FrameworkPropertyMetadata(null, 
+			new FrameworkPropertyMetadata(null,
 				FrameworkPropertyMetadataOptions.AffectsRender));
 
 		public Brush AxisBrush
@@ -285,6 +290,24 @@ namespace WPFPlot.Controls
 			InvalidateVisual();
 		}
 
+		protected override void PrepareItemOverride(GraphItem item)
+		{
+			base.PrepareItemOverride(item);
+			item.ParentGraph = this;
+		}
+
+		protected override Visual GetVisualChild(int index)
+		{
+			int count = base.VisualChildrenCount;
+			if (index < count)
+				return base.GetVisualChild(index);
+
+			return mTraceBoxes[index - count];
+		}
+
+		protected override int VisualChildrenCount
+		{ get { return base.VisualChildrenCount + mTraceBoxes.Count; } }
+
 
 		protected override Size MeasureOverride(Size constraint)
 		{
@@ -303,6 +326,9 @@ namespace WPFPlot.Controls
 				item.Measure(constraint);
 			}
 
+			foreach (var box in mTraceBoxes)
+				box.Measure(constraint);
+
 			IsInvalidateVisualEnabled = true;
 			base.MeasureOverride(constraint);
 			return constraint;
@@ -311,19 +337,32 @@ namespace WPFPlot.Controls
 		protected override Size ArrangeOverride(Size arrangeBounds)
 		{
 			var rect = new Rect(new Point(), arrangeBounds);
+
 			foreach (UIElement item in Items)
-			{
-				double x = GraphControl.GetBindPointX(item);
-				double y = GraphControl.GetBindPointY(item);
-				var bindPoint = new Point(x, y);
-				rect.Location = mPointTrans.Translate(bindPoint);
-				item.Arrange(rect);
-			}
+				ArrangeElement(item, ref rect);
+
+			foreach (var box in mTraceBoxes)
+				ArrangeElement(box, ref rect);
+
 			return arrangeBounds;
 		}
 
+		protected override void OnGraphItemsUpdated(
+			GraphItemUpdateOptions options)
+		{
+			base.OnGraphItemsUpdated(options);
 
-
+			switch (options)
+			{
+				case GraphItemUpdateOptions.DataSourceUpdated:
+					RearrangeTracingBoxes();
+					InvalidateVisual();
+					break;
+				case GraphItemUpdateOptions.PropertiesChanged:
+					InvalidateVisual();
+					break;
+			}
+		}
 
 		protected override void OnRender(DrawingContext dc)
 		{
@@ -364,12 +403,15 @@ namespace WPFPlot.Controls
 		protected override void OnMouseMove(MouseEventArgs e)
 		{
 			base.OnMouseMove(e);
+			mCurrentCursorPos = e.GetPosition(this);
+
 			if (IsMouseCaptured)
 			{
-				Point currentPoint = e.GetPosition(this);
-				Vector realitiveTrans = currentPoint - mCapturePoint;
+				Vector realitiveTrans = mCurrentCursorPos - mCapturePoint;
 				Center = mCaptureCenter + realitiveTrans;
 			}
+			else
+			{ RearrangeTracingBoxes(); }
 		}
 
 		protected override void OnMouseLeftButtonUp(MouseButtonEventArgs e)
@@ -382,6 +424,18 @@ namespace WPFPlot.Controls
 				mLastCenterTrans = Center - notModCenter;
 				Cursor = Cursors.Arrow;
 			}
+		}
+
+		protected override void OnMouseLeave(MouseEventArgs e)
+		{
+			base.OnMouseLeave(e);
+			HideTracingBoxes();
+		}
+
+		protected override void OnMouseEnter(MouseEventArgs e)
+		{
+			base.OnMouseEnter(e);
+			ShowTracingBoxes();
 		}
 
 		#endregion
@@ -501,73 +555,72 @@ namespace WPFPlot.Controls
 
 			double left = GetLeftGraphBound();
 			double right = GetRightGraphBound();
-			double from = mPointTrans.TranslateXBack(left);
-			double to = mPointTrans.TranslateXBack(right);
+			GraphDrawingOptions options = new GraphDrawingOptions()
+			{
+				From = mPointTrans.TranslateXBack(left),
+				To = mPointTrans.TranslateXBack(right),
+				GraphRect = GetGraphRectangle()
+			};
 
-			to = Math.Min(to, SegmentEnd);
-			from = Math.Max(from, SegmentBegin);
-			if (from >= to)
-				return;
-
-			Rect gRect = GetGraphRectangle();
-			gRect.X = mPointTrans.TransalteX(from);
-			gRect.Width = mPointTrans.TransalteX(to) - gRect.X;
 			foreach (var item in GraphItems)
-				RendePlotDataItem(dc, item, gRect, from, to);
-		}
-
-		private void RendePlotDataItem(DrawingContext dc, GraphItem item,
-			Rect rect, double from, double to)
-		{
-			IPlotDataSource plotData = item.PlotData;
-			if (plotData == null)
-				return;
-
-			plotData.SetZoom(Zoom);
-			plotData.SetSegment(from, to);
-			var pointsToDraw = plotData.GetPoints();
-			if (pointsToDraw.Count <= 1)
-				return;
-
-			var graphPen = new Pen(item.StrokeBrush, item.StrokeThickness);
-			int startIndex = plotData.GetStartIndex();
-			if (startIndex < 0)
-				return;
-
-			Point next = mPointTrans.Translate(pointsToDraw[startIndex]);
-
-			var boundPoint = plotData.Interpolate(from);
-			boundPoint = mPointTrans.Translate(boundPoint);
-			dc.DrawLine(graphPen, boundPoint, next);
-			if (rect.Left > GetLeftGraphBound())
-			{
-				dc.DrawEllipse(item.StrokeBrush, null, boundPoint,
-					BOUND_POINT_RADOUS, BOUND_POINT_RADOUS);
-			}
-
-			int endIndex = plotData.GetEndIndex();
-			for (int i = startIndex; i <= endIndex; i++)
-			{
-				Point prev = next;
-				next = mPointTrans.Translate(pointsToDraw[i]);
-				if (!(rect.Contains(prev) || rect.Contains(next)))
-					continue;
-
-				dc.DrawLine(graphPen, prev, next);
-			}
-
-			boundPoint = plotData.Interpolate(to);
-			boundPoint = mPointTrans.Translate(boundPoint);
-			dc.DrawLine(graphPen, next, boundPoint);
-			if (rect.Right < GetRightGraphBound())
-			{
-				dc.DrawEllipse(item.StrokeBrush, null, boundPoint,
-					BOUND_POINT_RADOUS, BOUND_POINT_RADOUS);
-			}
+				item.Draw(dc, mPointTrans, options);
 		}
 
 		#endregion
 
+		#region Tracing Boxes
+
+		private void HideTracingBoxes()
+		{
+			foreach (var box in mTraceBoxes)
+				box.Hide();
+		}
+
+		private void ShowTracingBoxes()
+		{
+			foreach (var box in mTraceBoxes)
+				box.Show();
+		}
+
+		private void RearrangeTracingBoxes()
+		{
+			double realX = mPointTrans.TranslateXBack(mCurrentCursorPos.X);
+			foreach (var box in mTraceBoxes)
+				box.UpdatePosition(realX);
+
+			InvalidateArrange();
+		}
+
+		#endregion
+
+		internal void AddTracingBox(TracingBox box)
+		{
+			mTraceBoxes.Add(box);
+			AddVisualChild(box);
+			AddLogicalChild(box);
+
+			double realX = mPointTrans.TranslateXBack(mCurrentCursorPos.X);
+			box.UpdatePosition(realX);
+			InvalidateMeasure();
+		}
+
+		internal void RemoveTracingBox(TracingBox box)
+		{
+			mTraceBoxes.Remove(box);
+			RemoveVisualChild(box);
+			RemoveLogicalChild(box);
+			InvalidateArrange();
+		}
+
+
+		private void ArrangeElement(UIElement element, ref Rect rect)
+		{
+			double x = GraphControl.GetBindPointX(element);
+			double y = GraphControl.GetBindPointY(element);
+			var bindPoint = new Point(x, y);
+			rect.Location = mPointTrans.Translate(bindPoint);
+			element.Arrange(rect);
+		}
 
 		private Point GetNotModifiedCenter(Size constraint)
 		{
@@ -623,6 +676,7 @@ namespace WPFPlot.Controls
 			}
 			return oneLength;
 		}
+
 
 
 	}
