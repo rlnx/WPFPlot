@@ -17,12 +17,14 @@ namespace WPFPlot.Example.ViewModel
 			Test2 = new ContinuousPlotDataSource() { Function = f2 };
 			Test3 = new ContinuousPlotDataSource() { Function = f3 };
 			Test4 = new ContinuousPlotDataSource() { Function = f4 };
+			Test5 = new DynamicPlotDataSource();
 		}
 
 		public IPlotDataSource Test1 { get; private set; }
 		public IPlotDataSource Test2 { get; private set; }
 		public IPlotDataSource Test3 { get; private set; }
 		public IPlotDataSource Test4 { get; private set; }
+		public IPlotDataSource Test5 { get; private set; }
 
 	}
 }

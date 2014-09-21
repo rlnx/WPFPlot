@@ -12,8 +12,6 @@
    <Grid>
 
       <wpfplot:GraphControl 
-         SegmentBegin="{Binding ElementName=segmentLeftSlider, Path=Value}"
-         SegmentEnd="{Binding ElementName=segmentRightSlider, Path=Value}" 
          Zoom="{Binding ElementName=zoomSlider, Path=Value}">
 
          <wpfplot:GraphControl.Items>
@@ -23,12 +21,33 @@
                wpfplot:GraphControlBase.BindPointY="0" />
          </wpfplot:GraphControl.Items>
 
-         <wpfplot:GraphItem StrokeBrush="Blue" PlotData="{Binding Test1}" />
-         <wpfplot:GraphItem StrokeBrush="Red" PlotData="{Binding Test2}" />
-         <wpfplot:GraphItem StrokeBrush="Green" PlotData="{Binding Test3}" />
-         <wpfplot:GraphItem StrokeBrush="Orange" PlotData="{Binding Test4}" />
+         <wpfplot:GraphItem 
+            StrokeBrush="Blue" 
+            PlotData="{Binding Test1}" 
+            SegmentBegin="{Binding ElementName=segmentLeftSlider, Path=Value}"
+            SegmentEnd="{Binding ElementName=segmentRightSlider, Path=Value}" />
+
+         <wpfplot:GraphItem 
+            StrokeBrush="Red" 
+            PlotData="{Binding Test2}" 
+            SegmentBegin="-3.14"
+            SegmentEnd="3.14" />
+
+         <wpfplot:GraphItem
+            IsTracingEnabled="True"
+            StrokeBrush="Orange" 
+            PlotData="{Binding Test4}" />
+
+         <wpfplot:GraphItem 
+            StrokeThickness="2"
+            IsTracingEnabled="True"
+            StrokeBrush="Green"
+            SegmentBegin="{Binding ElementName=segmentLeftSlider, Path=Value}"
+            SegmentEnd="{Binding ElementName=segmentRightSlider, Path=Value}"
+            PlotData="{Binding Test5}" />
 
       </wpfplot:GraphControl>
+
 
       <Slider 
          x:Name="zoomSlider" 

@@ -53,6 +53,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ViewModel\DynamicPlotDataSource.cs" />
     <Compile Include="ViewModel\FunctionWrapper.cs" />
     <Compile Include="ViewModel\MainModel.cs" />
     <Page Include="MainWindow.xaml">
