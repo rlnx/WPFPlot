@@ -1,0 +1,51 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+   <Style x:Key="MarkerExample" TargetType="Control">
+      <Setter Property="Template">
+         <Setter.Value>
+            <ControlTemplate TargetType="Control">
+
+               <Ellipse
+                  x:Name="Ellipse"
+                  Fill="Red"
+                  Width="12"
+                  Height="12"
+                  RenderTransformOrigin="0.5, 0.5">
+                  <Ellipse.RenderTransform>
+                     <TransformGroup>
+                        <ScaleTransform x:Name="EllipseScale" />
+                        <TranslateTransform X="-6" Y="-6" />
+                     </TransformGroup>
+                  </Ellipse.RenderTransform>
+               </Ellipse>
+
+               <ControlTemplate.Triggers>
+                  <EventTrigger SourceName="Ellipse" RoutedEvent="Loaded">
+                     <BeginStoryboard>
+                        <Storyboard>
+                           <DoubleAnimation 
+                                 Storyboard.TargetName="EllipseScale"
+                                 Storyboard.TargetProperty="ScaleX" 
+                                 To="0.5"
+                                 AutoReverse="True"
+                                 RepeatBehavior="Forever"
+                                 Duration="0:0:0.2" />
+                           <DoubleAnimation 
+                                 Storyboard.TargetName="EllipseScale"
+                                 Storyboard.TargetProperty="ScaleY" 
+                                 To="0.5" 
+                                 AutoReverse="True"
+                                 RepeatBehavior="Forever"
+                                 Duration="0:0:0.2" />
+                        </Storyboard>
+                     </BeginStoryboard>
+                  </EventTrigger>
+               </ControlTemplate.Triggers>
+               
+            </ControlTemplate>
+         </Setter.Value>
+      </Setter>
+   </Style>
+
+</ResourceDictionary>

@@ -16,9 +16,16 @@
          SegmentEnd="{Binding ElementName=segmentRightSlider, Path=Value}" 
          Zoom="{Binding ElementName=zoomSlider, Path=Value}">
 
-         <wpfplot:GraphItem StrokeBrush="Blue"   PlotData="{Binding Test1}" />
-         <wpfplot:GraphItem StrokeBrush="Red"    PlotData="{Binding Test2}" />
-         <wpfplot:GraphItem StrokeBrush="Green"  PlotData="{Binding Test3}" />
+         <wpfplot:GraphControl.Items>
+            <Control 
+               Style="{StaticResource MarkerExample}"
+               wpfplot:GraphControlBase.BindPointX="3.14"
+               wpfplot:GraphControlBase.BindPointY="0" />
+         </wpfplot:GraphControl.Items>
+
+         <wpfplot:GraphItem StrokeBrush="Blue" PlotData="{Binding Test1}" />
+         <wpfplot:GraphItem StrokeBrush="Red" PlotData="{Binding Test2}" />
+         <wpfplot:GraphItem StrokeBrush="Green" PlotData="{Binding Test3}" />
          <wpfplot:GraphItem StrokeBrush="Orange" PlotData="{Binding Test4}" />
 
       </wpfplot:GraphControl>
