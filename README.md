@@ -1,11 +1,12 @@
 WPF Plot
 =======
-Lightweight WPF library for plotting one dimensional mathematical functions.
+WPF library for plotting one dimensional mathematical functions including control for interactive plot.
 
 Features
 --------
 * Dynamic data plotting.
 * Scaling and moving coordinate system.
+* Bind UIElements to points in cartesian coordinate system.
 
 Screenshot
 ----------
