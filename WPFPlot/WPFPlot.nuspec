@@ -1,0 +1,12 @@
+﻿<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>WPFPlot</id>
+    <version>$version$</version>
+    <licenseUrl>https://github.com/RuslanIsrafilov/WPFPlot/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/RuslanIsrafilov/WPFPlot</projectUrl>
+  </metadata>
+  <files>
+    <file src="bin\Release\WPFPlot.dll" target="lib\net45" />
+  </files>
+</package>
