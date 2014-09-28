@@ -249,6 +249,9 @@ namespace WPFPlot.Controls
 			plotData.SetZoom(pt.Zoom);
 			plotData.SetSegment(from, to);
 			var pointsToDraw = plotData.GetPoints();
+			if (pointsToDraw == null)
+				return;
+
 			if (pointsToDraw.Count <= 1)
 				return;
 
