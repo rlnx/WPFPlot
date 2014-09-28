@@ -354,6 +354,9 @@ namespace WPFPlot.Controls
 
 			switch (options)
 			{
+				case GraphItemUpdateOptions.DataSourceChanged:
+					InvalidateVisual();
+					break;
 				case GraphItemUpdateOptions.DataSourceUpdated:
 					RearrangeTracingBoxes();
 					InvalidateVisual();
