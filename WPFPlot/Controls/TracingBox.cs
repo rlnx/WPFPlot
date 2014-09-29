@@ -103,6 +103,12 @@ namespace WPFPlot.Controls
 
 		internal void Show()
 		{
+			if (mGraphItem.PlotData == null)
+				return;
+
+			if (mGraphItem.PlotData.GetPoints().Count < 2)
+				return;
+
 			mIsHidden = false;
 			UpdateVisibility();
 		}
