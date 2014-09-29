@@ -155,6 +155,10 @@ $RECYCLE.BIN/
 # Mac desktop service store files
 .DS_Store
 
-
 # PowerShell scripts
 .ps1
+
+# Nuget packages
+*.nupkg
+*.nuspec
+
