@@ -249,7 +249,7 @@ namespace WPFPlot.Controls
 
 		#region Center Property
 
-		private static readonly DependencyProperty CenterProperty = 
+		public static readonly DependencyProperty CenterProperty = 
 			DependencyProperty.Register(
 			"Center",
 			typeof(Point),
@@ -265,7 +265,7 @@ namespace WPFPlot.Controls
 			owner.OnCenterChanged(oldValue, newValue);
 		}
 
-		private Point Center
+		public Point Center
 		{
 			get { return (Point)GetValue(CenterProperty); }
 			set { SetValue(CenterProperty, value); }
