@@ -7,17 +7,20 @@ using System.Windows;
 
 namespace WPFPlot.Data
 {
-	public interface IPlotDataSource
-	{
-		event EventHandler PointsChanged;
+   public interface IPlotDataSource
+   {
+      event EventHandler PointsChanged;
 
-		void SetSegment(double from, double to);
-		void SetZoom(double zoom);
+      void SetSegment(double from, double to);
+      void SetZoom(double zoom);
 
-		Point Interpolate(double x);
-		IList<Point> GetPoints();
+      Point Interpolate(double x);
+      IList<Point> GetPoints();
 
-		int GetStartIndex();
-		int GetEndIndex();
-	}
+      int GetStartIndex();
+      int GetEndIndex();
+
+      double GetSegmentBegin();
+      double GetSegmentEnd();
+   }
 }

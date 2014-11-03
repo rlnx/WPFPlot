@@ -257,12 +257,14 @@ namespace WPFPlot.Controls
          if (plotData == null)
             return;
 
-         double from = Math.Max(op.From, SegmentBegin);
-         double to = Math.Min(op.To, SegmentEnd);
+         double plotDataBegin = plotData.GetSegmentBegin();
+         double plotDataEnd = plotData.GetSegmentEnd();
+         double from = Math.Max(Math.Max(op.From, SegmentBegin), plotDataBegin);
+         double to = Math.Min(Math.Min(op.To, SegmentEnd), plotDataEnd);
          if (from >= to)
             return;
 
-         plotData.SetZoom(pt.Zoom);
+         //plotData.SetZoom(pt.Zoom);
          plotData.SetSegment(from, to);
          var pointsToDraw = plotData.GetPoints();
          if (pointsToDraw == null)

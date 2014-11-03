@@ -65,5 +65,13 @@ namespace WPFPlot.Example.ViewModel
 		private double GetFValue(double x)
 		{ return mFunc(x, mTParam); }
 
-	}
+
+
+      public double GetSegmentBegin()
+      { return Double.NegativeInfinity; }
+
+      public double GetSegmentEnd()
+      { return Double.PositiveInfinity; }
+
+   }
 }

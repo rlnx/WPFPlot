@@ -12,8 +12,9 @@
    <Grid>
 
       <wpfplot:GraphControl 
-         Zoom="{Binding ElementName=zoomSlider, Path=Value}">
-
+         ZoomX="{Binding ElementName=zoomSlider, Path=Value}"
+         ZoomY="{Binding ElementName=zoomSliderY, Path=Value}">
+         
          <wpfplot:GraphControl.Items>
             <Control 
                Style="{StaticResource MarkerExample}"
@@ -58,6 +59,15 @@
          VerticalAlignment="Top"
          Orientation="Horizontal"
          Margin="20, 5, 20, 0" />
+
+      <Slider 
+         x:Name="zoomSliderY" 
+         Minimum="0"
+         Maximum="1"
+         Value="0.1"
+         VerticalAlignment="Bottom"
+         Orientation="Horizontal"
+         Margin="20, 0, 20, 5" />
 
       <Slider 
          x:Name="segmentLeftSlider"

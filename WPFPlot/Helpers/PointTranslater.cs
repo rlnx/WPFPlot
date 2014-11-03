@@ -7,14 +7,14 @@ namespace WPFPlot.Helpers
 		public PointTranslater() { }
 
 		public Point Center { get; set; }
-		public double Zoom { get; set; }
-
+		public double ZoomX { get; set; }
+      public double ZoomY { get; set; }
 
 		public double TransalteX(double x)
-		{ return Center.X + Zoom * x; }
+		{ return Center.X + ZoomX * x; }
 
 		public double TranslateY(double y)
-		{ return Center.Y - Zoom * y; }
+		{ return Center.Y - ZoomY * y; }
 
 
 		public Point Translate(Point point)
@@ -25,10 +25,10 @@ namespace WPFPlot.Helpers
 		}
 
 		public double TranslateXBack(double x)
-		{ return (x - Center.X) / Zoom; }
+		{ return (x - Center.X) / ZoomX; }
 
 		public double TranslateYBack(double y)
-		{ return (Center.Y - y) / Zoom; }
+		{ return (Center.Y - y) / ZoomY; }
 
 		public Point TranslateBack(Point point)
 		{
@@ -37,11 +37,18 @@ namespace WPFPlot.Helpers
 			return point;
 		}
 
-		public double TranslateDist(double dist)
-		{ return dist * Zoom; }
+		public double TranslateDistX(double dist)
+		{ return dist * ZoomX; }
 
-		public double TranslateDistBack(double dist)
-		{ return dist / Zoom; }
+		public double TranslateDistXBack(double dist)
+		{ return dist / ZoomX; }
+
+      public double TranslateDistY(double dist)
+      { return dist * ZoomY; }
+
+      public double TranslateDistYBack(double dist)
+      { return dist / ZoomY; }
+
 
 		public Rect TranslateBack(Rect rect)
 		{
