@@ -42,6 +42,7 @@
             StrokeThickness="2"
             IsTracingEnabled="True"
             StrokeBrush="Green"
+            IsInterpolationEnabled="False"
             SegmentBegin="{Binding ElementName=segmentLeftSlider, Path=Value}"
             SegmentEnd="{Binding ElementName=segmentRightSlider, Path=Value}"
             PlotData="{Binding Test5}" />
